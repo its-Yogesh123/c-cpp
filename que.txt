@@ -1,0 +1,3 @@
+why cannot use {} with ternary operator???
+what are different ways to create Alias (like typedef)
+Initializer list in c++
