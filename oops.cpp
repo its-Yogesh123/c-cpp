@@ -16,7 +16,6 @@ An aggregate is a type that:
 #include <iostream>
 using namespace std;
 
-
 /*
 A function signature includes:
     The function’s name
@@ -82,40 +81,47 @@ Function Prototype = Signature + return type + default arguments + const qualifi
 
 /*
 1. this works fine while defining method outside class (all class member accessible)
-2. For any scope(public private or protected) we can define function outside the class (using ::) but
-    can only call private function from class scope only 
+2. For any scope(public private or protected) we can define function outside the class (using ::) given that methods already declared 
+but can only call private function from class scope only 
 3. we can define constructors also outside the class
 */
 
 //----------------------------------------------------- Constructors -----------------------------------
-// constructor prototype
-//-----    class_name();
-//------ class_name:: class_name();    --- outside the class
 /*
-    Types : Default, Parameterized, Copy, Move(C++11)
-    Delegation Constructor(call one cons. from another)
-    Conversion Constructor
+constructor prototype
+class_name();
+class_name:: class_name(){};    --- definition outside the class [Must be declared outside the class]
+    Types : 
+        Default : Any constructor that can be called with 0 arguments .
+        Parameterized : Any constructor that can be called with non-zero arguments.
+        Copy
+        Move(C++11)
+        Conversion Constructor : Single parameterised constructor with no explicit keyword
+    Delegation of Constructors (call one cons. from another)
 */
+
 //#include <iostream>
 //using namespace std;
-
-// class car(){}  // implicit default constructor with 0 args
+// class car(){}  // implicit constructor
 // class car{
 //     public:
 //     int model=657;
 //     int price=0b101;
-//     car(){                                // explicit default constructor
+//     car(){                                // explicit + default constructor
 //         cout<<"Model is "<<model<<endl
 //         << "price is "<<price<<endl;
 //     }
+//     // car(int a=0,int b=0){}   // also a default constructor
 // };
 // int main(){
 //     car bmw;
 //     car tata;   // as 2 times obj created hence both times constructor run
-    
 //     return 0;
 // }
+
+
 // --- 2. parameterized constructor
+// ⚠️ Any parameterized constructor could be a default constructor using (all default params)
 //class car{
 //    public:
 //    int model;
@@ -131,8 +137,9 @@ Function Prototype = Signature + return type + default arguments + const qualifi
 //    return 0;
 //}
 
-// ---------- copy construcot
+// ---------- copy constructor
 // => nothing but a special type of parameterized function in which the parameter is object of same class
+//  🔴 It must have only 1 parameter i.e. reference of another object of same type
 // #include <iostream>
 // using namespace std;
 // class student{
@@ -200,7 +207,7 @@ Function Prototype = Signature + return type + default arguments + const qualifi
 //     obj =10;            // this is implicit conversion (use of conversion constructors)
 //     cout<<obj.val<<endl;
 //     obj = {1,2};    // ❌ no implicit conversion  because using initalizing list( C++11) it will call corresponding constructor
-//     obj ={90};    // ❌ no type conversion
+//     obj ={90};    // ❌ no type conversion constructor instead normal 
 //     cout<<obj.val;
 
 // }
@@ -213,7 +220,7 @@ Function Prototype = Signature + return type + default arguments + const qualifi
 //     public:
 //     int val;
 //     explicit test(int a){
-//         this->val = a;constructor with Initializing li
+//         this->val = a; // constructor with Initializing list
 //         cout<<"Constructor called \n";
 //     }
 // };
@@ -224,29 +231,43 @@ Function Prototype = Signature + return type + default arguments + const qualifi
 //     cout<<obj.val;
 //     return 0;
 // }
-// ******************** Initialisation list *****************************             (imp)
-/* It initialize members before cons. body execute
+
+/* Ways to initialise object
+    Default Initialization
+    Direct Initialization
+    Direct Uniform Initialization
+    Copy List Initialization
+    Conversion Constructor
+*/
+
+
+// ******************** Initialisation  vs Assignment *****************************             (imp)
+/* Before moving on we have 2-kind of initialization
    1. Parameter Initialisation ()
    2. uniform Initialisation  {}  --> strict type checking and restrict narrow conversions (like 280 to char)
-   3. Order of Intialization :- According to declaration in class
-   like if a is decalre before b then a will initialised first even if a is wrote before b in list
+    Order of Intialization :- According to declaration in class (matter if initialier list)
+   like if a is declare before b then a will initialised first even if a is wrote before b in list
 */
 // class demo{
+//     public:
 //     int a;
 //     int b;
-//     public:
-//     demo(int b,int a):b{this->a},a(b){
-//         cout<<"Value of a : "<<this->a<<" and b : "<<this->b;
-//         // if we initialised the member here using '=' then top to down matter
-//         // means if we wrote b first then b will intialised first
-//     }
+//     // demo(int b):b{this->a},a(this->b){
+//     //     cout<<"Value of a : "<<this->a<<" and b : "<<this->b;
+//     //     // if we initialised the member here using '=' then top to down matter
+//     //     // means if we wrote b first then b will intialised first
+//     // }
 //     // proof a is initialised first
-//     // demo(int b,int a):b{this->a},a(this->b){    // error because b is not yet initialised
+//     // demo(int b):b{a},a(this->b){    // error because b is not yet initialised
 //     //     cout<<"Value of a : "<<this->a<<" and b : "<<this->b;
 //     // }
+
+//     // demo with more intution
+//     demo(int x):b(x++),a(x++){}
 // };
 // int main(){
-//     demo obj1(1,2);
+//     demo obj1(2);
+//     cout<<obj1.a<<" "<<obj1.b;
 //     return 0;
 // }
 
@@ -409,7 +430,7 @@ placement new : only create object to specified location(we provide that locatio
 // int main(){
 //     fun();
 // }
-// ----- Application of descructors
+// ----- Application of destructors
 //#include <iostream>
 //#include <string.h>
 //using namespace std;
@@ -1473,19 +1494,19 @@ so use dynammic_cast(slow due to runtime checks) :
     dynamic_cast use RTTI(runtime type information) which is implimented by vtable
 */
 
-class Base{};
-class Child:public Base{};
+// class Base{};
+// class Child:public Base{};
 
-int main(){
-    Child c1;
-    Base* obj = &c1;   // upcasting(implicit)
+// int main(){
+//     Child c1;
+//     Base* obj = &c1;   // upcasting(implicit)
 
-    Child* ptr1 = static_cast<Child*>(obj);  // downcasting(not implicit)
-    // not safer of obj is not refrencing to child object
-    // so use dynamic_cast if obj is not refrencing to child object it return nullptr
-    return 0;
-}
-
+//     Child* ptr1 = static_cast<Child*>(obj);  // downcasting(not implicit)
+//     // not safer of obj is not refrencing to child object
+//     // so use dynamic_cast if obj is not refrencing to child object it return nullptr
+//     return 0;
+// }
+// ================================================ Abs.
 /*     Abstraction : It is principle of hiding complex implementation details and showing only essential features(interface) of an object.
     -> Separation of what and how
     focus on what object does rather than how it does
