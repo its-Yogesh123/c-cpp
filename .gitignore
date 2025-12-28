@@ -1,0 +1,42 @@
+# ===== Compiled Object files =====
+*.o
+*.obj
+*.lo
+*.slo
+
+# ===== Precompiled Headers =====
+*.gch
+*.pch
+
+# ===== Static Libraries =====
+
+# ===== Dynamic Libraries =====
+
+
+# ===== Executables =====
+*.exe
+*.out
+*.app
+
+# ===== Build directories =====
+build/
+# ===== CMake =====
+# ===== VS Code =====
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ===== OS generated files =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+
+
+# git rm -r --cached .
+# git add .
+# git commit -m "Apply .gitignore"
