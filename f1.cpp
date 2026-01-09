@@ -1,13 +1,18 @@
+/*
+Why every object have alignment ????? 
+
+
+
+*/
+
+
 //     creating Alias
 
 // Literals  Fixed Values without name interpreted as it is at compile time
     // int float string double ....
     // binary literal 0b101010
     // hex literal etc..
-#include <unordered_map>
-#include <vector>
-#include <thread>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 #define vii vector<int>    //    can use vii inplace  of vector<int>
 // or
@@ -721,10 +726,14 @@ An enum (enumeration) is a user-defined type that represents a set of named inte
 
 
 // -----------------------Dynamic memory allocation in C++ -----------------------
-// new and delete operators
-// placement_new operator
-// syntax  new d_type(value)  -- create only single block and store value in it
-// new d_type[n] -- create n block
+/*
+new and delete operators
+    using new memory is create at runtime compiler doesn't know about that so cannot destroyed it
+    we have to release the resourses
+syntax  new d_type(value)  -- create only single block and store value in it
+new d_type[n] -- create n block
+
+*/
 //#include <iostream>
 //using namespace std;
 //int main(){
@@ -748,7 +757,52 @@ An enum (enumeration) is a user-defined type that represents a set of named inte
 
 
 
+/*  ------------- new vs placement new. --------- 🔴 
+new allocate memory in heap and intitalize object there and return its address
+placement new : only create object to specified location(we provide that location)
+                using placement new we have control on memory location of objects
 
+            Note : 
+                cannot call delete for memory release
+                Always use destructor manually with placement new
+// */
+// class A{
+//     public:
+//     int a;
+//     A():a(90){
+//         cout<<"Constructor Called\n";
+//     }
+// };
+// int main(){
+//     // // A* obj = new A();   //  allocate memory + initialize object -> return that address
+//     // char buffer[sizeof(A)];   // space create
+//     // A* obj = (A*)buffer;  // type casting
+//     // // new(buffer)A();   // 1st way.   now object it placed at buffer space
+//     // // A* obj1 = new(obj)A();      2nd way
+//     // // here address stored in obj1 is not new but of buffer which is same as obj so both have ownership
+//     // cout<<obj->a<<endl;
+//     // // delete obj;  // 🎯 error cannot delete a stack object and buffer is in stack(obj is pointing to buffer)
+//     // // cout<<obj1->a<<endl;
+
+//     // recommended method
+//     cout<<alignof(A); // i.e 4 - depend on member
+//     alignas(A) char buffer[sizeof(A)];
+//     A* obj = new(buffer) A();
+// }
+
+/* Char because it is lowest unit and of 1 Bytes : Buffer of any size we can make from this
+    alignas(class) :  It just shift the object 
+    Modern CPUs require objects to be placed at specific memory boundaries.
+        int : 4 byte aligned (multiple of 4)
+        double : 8-byte aligned
+        Class : depend on member
+    if not use the buffer may start with any  memory location (as its alignment is 1byte )
+    alignas() ensure objects fits perfectly in given space
+    e.g. 4byte aligned object but memory start with 2 'i.e. 2 ot 5 buffer
+    but object will starts from  4... - (breach the boundary)
+    misalignment (no memory lost but due to misalignment cannot access )
+
+*/
 
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Part IInd <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,
@@ -1535,27 +1589,27 @@ after deleting it returns the iterator pointing to next element
 
 
 // --------------------------------------🚨🚨🚨🚨🚨🚨 Multithreading 🚨🚨🚨🚨🚨🚨------------------------------
-#include <thread>
-/* syntax : thread name(callable)
-    callable: 
-        function
-        static/not-static member methods
-        functor
-        lambda expression
-*/
-void fun(){
-    for(int i=0;i<10;i++)cout<<"Child Thread "<<i<<endl;
-}
-int main(){
-    thread t1(fun);
-    for(int i=0;i<10;i++)cout<<"Main Thread "<<i<<endl;
-    // cout<<t1.joinable()<<endl;
-    // t1.join();  // merging thread to parent
-    t1.detach();     //(child may not exectue completly because main thread will terminate then all thing terminate)
+// #include <thread>
+// /* syntax : thread name(callable)
+//     callable: 
+//         function
+//         static/not-static member methods
+//         functor
+//         lambda expression
+// */
+// void fun(){
+//     for(int i=0;i<10;i++)cout<<"Child Thread "<<i<<endl;
+// }
+// int main(){
+//     thread t1(fun);
+//     for(int i=0;i<10;i++)cout<<"Main Thread "<<i<<endl;
+//     // cout<<t1.joinable()<<endl;
+//     // t1.join();  // merging thread to parent
+//     t1.detach();     //(child may not exectue completly because main thread will terminate then all thing terminate)
 
-    if(t1.joinable())t1.join();
-    return 0;
-}
+//     if(t1.joinable())t1.join();
+//     return 0;
+// }
 
 
 

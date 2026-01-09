@@ -97,6 +97,9 @@ class_name:: class_name(){};    --- definition outside the class [Must be declar
         Copy
         Move(C++11)
         Conversion Constructor : Single parameterised constructor with no explicit keyword
+    Operators :
+        Copy Assignment Operator
+        Move Assignmet Operator
     Delegation of Constructors (call one cons. from another)
 */
 
@@ -241,6 +244,7 @@ class_name:: class_name(){};    --- definition outside the class [Must be declar
 */
 
 
+
 // ******************** Initialisation  vs Assignment *****************************             (imp)
 /* Before moving on we have 2-kind of initialization
    1. Parameter Initialisation ()
@@ -270,6 +274,44 @@ class_name:: class_name(){};    --- definition outside the class [Must be declar
 //     cout<<obj1.a<<" "<<obj1.b;
 //     return 0;
 // }
+// ----------------------------------- proof initializater not use copy assignment operator
+// class Base{
+//     public:
+//     Base(){
+//         cout<<"Constructor Called"<<endl;
+//     }
+//     Base(Base& obj){
+//         cout<<"Copy Constructor called"<<endl;
+//     }
+//     Base& operator=(Base& obj){
+//         cout<<"Copy Assignment Constructor called"<<endl;
+//         return *this;
+//     }
+// };
+// class A{
+//     public:
+//     Base obj;
+//     // A(Base& obj1):obj(obj1){
+//     // }
+
+//     // assignment
+//     A(Base& obj1){     // if pass by value then one copy-constructor to make local obj1 from passed value
+//         obj = obj1;
+//     }
+// };
+
+// int main(){
+//     Base obj;       // 1st time constructor called for this
+//     A obj1(obj);
+//     return 0;
+// }
+
+/*
+If using initializor list only copy constructor will called
+if not then default initializor and then copy assignment operator for copying values
+*/
+
+
 
 /* --------- Move Constructor  (c++11+)
 to move ownership of an object 
@@ -290,10 +332,11 @@ transferrign ownership
 //     A(int n):a(n){
 //         cout<<"constructor called\n";
 //     }
-//     // defining move constructor
+//     // defining copy constructor
 //     A(A& obj){
 //         cout<<"Copy Constructor Called\n";
 //     }
+//    // defining move constructor
 //     A(A&& obj){
 //         this->a= obj.a;     // just shallow copy
 //         obj.a = nullptr;
@@ -356,34 +399,18 @@ with RVO and C++17 + only 1 object will created
 1 time destructor 
 */
 
-/*  ------------- new vs placement new
-new allocate memory in heap and intitalize object there and return its address
-placement new : only create object to specified location(we provide that location)
-// */
-// class A{
-//     public:
-//     int a;
-//     A():a(90){
-//         cout<<"Constructor Called\n";
-//     }
-// };
-// int main(){
-//     // A* obj = new A();   //  allocate memory + initialize object
-//     char buffer[sizeof(A)];   // space create
-//     A* obj = (A*)buffer;  // type casting
-//     // new(buffer)A();   // 1st way.   now object it placed at buffer space
-//     // A* obj1 = new(obj)A();      2nd way
-//     // here address stored in obj1 is not new but of buffer which is same as obj so both have ownership
-//     cout<<obj->a<<endl;
-//     // cout<<obj1->a<<endl;
-// }
+
 
 
 // ----------------------------------- Destructors-----------------------------------
-//  ------ Where a destructor is called ?????
-// 1). when object goes out of scope
-// 2). object is explicit delete
-// 3). Destuctor function called externally
+/*
+    Destructor is tied with object's lifetime only .
+------ When a destructor is called ?????
+    1). when object goes out of scope
+    2). object is explicit delete
+    3). Destuctor function called externally
+*/
+
 // #include <iostream>
 // using namespace std;
 // class class1{
@@ -500,7 +527,7 @@ placement new : only create object to specified location(we provide that locatio
 //     c1(){
 //         cout<<"Constructor Called";
 //     }
-//     friend void des(c1*);
+//     friend void des(c1*);      
 //     static void des1(c1* obj){delete obj;}
 //     void des2(){delete this;}
 // };
@@ -572,6 +599,7 @@ placement new : only create object to specified location(we provide that locatio
 
 //------------------------------ Friend class ------
 // a friend class can access or manage all private and protected members of that class
+// no need forward declaration
 // #include <iostream>
 // using namespace std;
 // class parent{           // base class
@@ -611,7 +639,7 @@ placement new : only create object to specified location(we provide that locatio
 //         age=30;
 //         otp=5547;
 //     }
-//     friend void spy_fun(base&);
+//     friend void spy_fun(base&);  // firend also declare the function
 // };
 // void spy_fun(base& obj){
 //     cout<<"Age is : "<<obj.age<<endl
@@ -661,7 +689,7 @@ placement new : only create object to specified location(we provide that locatio
     Must define outside the class but static const data members of 🚨integral type which can be initialized in the class declaration.
     Only 1 copy (shared among all objects) which can modify this
     Static member function can access static variables
-    Static member function does not have this
+    Static member function does not have 'this'
 */
 // static int hello=90;
 
@@ -806,6 +834,7 @@ placement new : only create object to specified location(we provide that locatio
 
 // }
 // ⚠️ delete this in Constructor  (Compiles success)
+
 // class A{
 //     public:
 //     int a;
@@ -820,6 +849,7 @@ placement new : only create object to specified location(we provide that locatio
 //     }
 // };
 // int main(){
+//     A obj; // error as object is in stack not in heap (use 'delete' always with object created by 'new')
 //     A* obj = new A();
 // }
 // ----- -----------------application of this
@@ -886,9 +916,14 @@ int main(){
 //     obj.check1();
 // }
 
-// friend in local class
-// 🚨 Local is saying: “If Global ever sees me, it has access to my private stuff.”
-// ⚠️ But Global cannot sees Local, because it's outside the scope — so the access is granted but useless.
+/* friend in local class
+ 🚨 Local is saying: “If Global ever sees me, it has access to my private stuff.”
+ ⚠️ But Global cannot sees Local, because it's outside the scope — so the access is granted but useless.
+    because its functoin's local stuff anythign cannot access block's local stuff global class completely unaware
+    about there exists any local class or not
+
+
+*/
 // class globalClass{
 //     public:
 //     void fun(){}
@@ -917,11 +952,15 @@ int main(){
 
 // class outter{
 //     string nonStaticPvt;
-//     string nonStaticPub;
 //     inline static int a=90;    // static + enum  direct access to inner
 //     enum Number{One,Two,Three};
 //     int outerNonStatic;
 //     public:
+//     string nonStaticPub;
+//     outter(){
+//         this->nonStaticPub = "Outter class Non-Static Pubic Member";
+//         this->nonStaticPvt = "Outter class Non-Static Private Member";
+//     }
 //     class inner{
 //         string innerPvt;
 //         int a;
@@ -931,11 +970,12 @@ int main(){
 //         inner(){
 //             this->innerPub ="Inner class Public member";
 //             this->innerPvt ="Inner class Private member";
-//             // this->a =90;
+//             this->a =1000;
 //             // cout<<outter::outerNonStatic<<endl;      // ❌ cannot access non-static member as obj required
-//             // cout<<this->a<<endl;    // ✅ access static member
-//             cout<<One<<endl;           // ✅ access enum member
-//             cout<<"inner class constructor"<<" "<<outter::a;  // inner class variable  shadows outter::a so use ::
+//             cout<<outter::a<<endl;
+//             cout<<this->a<<endl;    // ✅ access static member
+//             cout<<outter::One<<endl;           // ✅ access enum member
+//             cout<<"inner class constructor"<<endl;  // inner class variable  shadows outter::a so use ::
 //         }
 //         void getOutter(outter& obj){
 //             cout<<obj.nonStaticPvt<<endl;    //  ✅ access private member
@@ -1548,7 +1588,7 @@ so use dynammic_cast(slow due to runtime checks) :
 // }
 // Explanation:-  
 /*When normal variable passed in func then every func create a copy of that actual parameter.
-The function cannot change original valur to writing const before normal parameters is useless...
+The function cannot change original value to writing const before normal parameters is useless...
 But in Pointer case is sensitive because we can change value of that pointer from anywhere in file*/
 
 /// ----------- <> Diamond problem

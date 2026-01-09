@@ -1,10 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+
+class A{
+    int x(){
+        return 10;
+    }
+    public:
+    int x(){
+        return this->x();
+    }
+};
 int main(){
-    int* ptr;
-    char* ptr1 = (char*)ptr;
-    ptr1 = new[ptr1]();
-    cout<<*ptr<<" "<<*ptr1;
+    A obj;
+    cout<<obj.x();
     return 0;
 }
