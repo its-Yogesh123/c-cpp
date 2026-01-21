@@ -32,5 +32,10 @@
 15. How do you initilize  a const non-static member ?
 15. Using delete this in destructor ?
 15. Using delete this in constructor ?
-16. What is this Class obj(); ?
-16. Can we use 'delete' with every type of object ?
+16. What is this class_name obj(); ?
+17. Can we use 'delete' with every type of object ?
+18. Constructor Delegation ?
+19. Solid Princliple
+20. Which OOps principle is used mostly to achieve Loose Coupling in c++ ?
+21. How to achive Loose Coupling in c++?
+22. How to achieve LSP in SOLID?

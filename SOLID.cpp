@@ -2,6 +2,110 @@
 using namespace std;
 
 
+
+
+/*  ************************** Cohesion ***************************
+    1. High Cohesion : highly releted parts inside a module
+            we do have an answer to why 'this or that' belong to particular class/module?
+    2. Low Cohesion :  no interdependency
+            co-incidental neighbours
+*/
+
+// low cohesion
+// class FirstAid {
+// public:
+//     void doBandage();      // medical
+//     void repairTable();    // furniture repair
+//     void calculateBill();  // accounting
+// };
+
+
+// high cohesion
+// class FirstAid {
+//     string disinfect;
+//     string bandage;
+// public:
+//     void cleanWound();
+//     void applyBandage();
+// };
+
+
+/*  ************************** Coupling ***************************
+    1. Tight Coupling [Bad Design] : heavily Dependency on other classes (depends on implimentation)
+    2. Loose Coupling [Good Design]  : weak dependency (depends on interface and use dependency injection)
+*/
+ 
+
+
+
+
+
+
+/* ************************ Dependency Injection *******************
+Dependency : Need some other module/object to do somee work
+Injection : Passing that object in from the outside, rather than creating it inside.
+    Constructor Injection
+    Setter Injection
+Why?
+    Open/Close Principle in SOLID
+    Loose Coupling
+    Easy Unit Testing
+        in hard-coded dependency we have no control on dependecy for testing puspose also we have to initiate the
+        full objects but Using DI we can inject fake object just to test ....
+*/
+
+
+//  ❌ High coupling 
+// class Payment{
+//     public:
+//     void payByCash(){
+//         cout<<"Payment By Cash";
+//     };
+// };
+
+// class Counter{
+//     Payment make_payment;  // dependecy created inside   
+//     // tight coupling (depend directly on implimentation)
+//     public:
+//     void payBill(){
+//         make_payment.payByCash();
+//     }
+// };
+
+//  ✅ Low coupling 
+// class Payment{
+//     public:
+//     virtual void pay()=0;  // interface
+// };
+
+// class Cash:public Payment{       // extension(Open/Close principle)
+//     public:
+//     void pay() override{
+//         cout<<"Payment By Cash";
+//     };
+// };
+
+// class UPI:public Payment{     // extension (not modification)
+//     public:
+//     void pay() override{
+//         cout<<"Payment By UPI";
+//     };
+// };
+
+
+// class Counter{
+//     Payment* make_payment;    // loose coupling 
+//     public:
+//     Counter(Payment* dependency){      // DI via Constructor Injection
+//         make_payment = dependency; 
+//     }
+//     void payBill(){     
+//         make_payment->pay();
+//     }
+// };
+
+
+/* ************************************** SOLID ***************************************/
 // class Restaurant{
 //     public:
 //     void make_food(){}
@@ -13,6 +117,7 @@ using namespace std;
 
 // More clean readable Using SRP (Single Responsiblity Principle)
 // There should be High Cohesion(Methods in class are closely related)
+
 // class Chef{
 //     public:
 //     void make_food(){}
@@ -76,3 +181,48 @@ using namespace std;
 //     public:
 //     void pay() override{}
 // };
+/* ******************** Liskov's SP ******************** 
+
+How ?
+    via multi-level inheritence or multiple inheritence
+*/
+
+
+
+// not satifying LSP 
+// class A{
+//     public:
+//     void m1();
+//     void m2();
+//     void m3();
+// };
+
+
+// class B:public A{        // it cannot implement m3 so we cannot directly make
+//     public:
+//     void m1();
+//     void m2();    
+//     void m3(){
+//         throw std::runtime_error("Beyond My capability");
+//     }    
+// };
+
+
+// // LSP
+// class A{
+//     public:
+//     void m1();
+//     void m2();
+// };
+
+// class B:public A{
+//     public:
+//     void m3();
+// };
+
+
+
+// // now classes who satisfies all can inherit B and who cannot impliment m3 can inherit A
+// class C:public A{};    // fine
+
+

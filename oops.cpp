@@ -100,7 +100,9 @@ class_name:: class_name(){};    --- definition outside the class [Must be declar
     Operators :
         Copy Assignment Operator
         Move Assignmet Operator
-    Delegation of Constructors (call one cons. from another)
+    Delegation of Constructors (call one cons. from another) after c++11
+        Should be in Initializer list
+        Only one constructor
 */
 
 //#include <iostream>
@@ -399,9 +401,29 @@ with RVO and C++17 + only 1 object will created
 1 time destructor 
 */
 
+// --------------------   Delegation of Constructor
 
-
-
+// class Base{
+//     public:
+//     int a;
+//     int b;
+//     Base(){
+//         a =90;
+//         cout<<" Constructor Called"<<endl;
+//     }
+//     Base(int n): Base(){
+//         // Base();   // 🔴 not delegation it will create temporary object
+//         b=n;
+//         cout<<"Param Constructor Called"<<endl;
+//     }
+//     Base(int a,int b):Base(b){ // max 1 constructor only
+//     }
+// };
+// int main(){
+//     Base obj(8);
+//     cout<<obj.a<<" "<<obj.b;
+//     return 0;
+// }
 // ----------------------------------- Destructors-----------------------------------
 /*
     Destructor is tied with object's lifetime only .
@@ -1671,14 +1693,3 @@ But in Pointer case is sensitive because we can change value of that pointer fro
 //     return 0;
 // }
 
-
-/* ---------------------- Coupling
- ----------------
-    1. Tight Coupling : heavily Dependency on other classes
-    2. Loose Coupling : weak dependency
-*/
-
-// class A{};
-// class B{
-//     A obj;   // if A not exists then B cannot intiate (Tight Coupling)
-// };
