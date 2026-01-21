@@ -4,6 +4,7 @@
 *.lo
 *.slo
 bin/
+tempCodeRunnerFile.cpp
 # ===== Precompiled Headers =====
 *.gch
 *.pch
